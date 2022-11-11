@@ -1,0 +1,55 @@
+<div class="col-lg-4 wrraper">
+
+  <form #questionForm="ngForm">
+    <h3 *ngIf="counter<10">
+      What kind of word is "{{currentWord}}"?
+    </h3>
+
+    <div id="choices" *ngIf="counter<10">
+
+      <input (click)="onChoose(questionForm ,$event)" class="form-check-input" ngModel type="radio" name="Answer"
+        id="choice1" value="adjective">
+      <label class="form-check-label" for="choice1">
+        Adjective
+      </label>
+
+      <input (click)="onChoose(questionForm ,$event)" class="form-check-input" ngModel type="radio" name="Answer"
+        id="choice2" value="adverb">
+      <label class="form-check-label" for="choice2">
+        Adverb
+      </label>
+
+      <input (click)="onChoose(questionForm ,$event)" class="form-check-input" ngModel type="radio" name="Answer"
+        id="choice3" value="noun">
+      <label class="form-check-label" for="choice3">
+        Noun
+      </label>
+
+      <input (click)="onChoose(questionForm ,$event)" class="form-check-input" ngModel type="radio" name="Answer"
+        id="choice4" value="verb">
+      <label class="form-check-label" for="choice4">
+        Verb
+      </label>
+
+
+    </div>
+
+
+
+    <div class="final-result-section">
+
+      <label class="inform-rank" *ngIf="counter==10">You scored higher than {{rank}}% of assessment takers.</label>
+
+      <div class="progress-bar" [ngStyle]="{'width' : progress + '%'}">
+        {{progress}}%
+      </div>
+
+      <div *ngIf="counter==10" class="final-result">
+        <button type="submit" class="btn btn-primary tryAgain-btn" (click)="onTryAgain()">Try again</button>
+      </div>
+
+    </div>
+
+
+  </form>
+</div>

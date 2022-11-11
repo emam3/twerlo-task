@@ -1,0 +1,5 @@
+twerlo-backend/node_modules
+twerlo-frontEnd/node_modules
+
+twerlo-frontEnd/.vscode
+twerlo-frontEnd/.angular
