@@ -14,7 +14,7 @@ Use the package manager [npm](https://www.npmjs.com/) to install required librar
 npm install
 ```
 
-## Build
+## How to run the project
 
 After installing, run this command in the terminal at the back-end folder.
 
