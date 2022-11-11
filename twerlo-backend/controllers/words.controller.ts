@@ -2,37 +2,25 @@ import testData from "../TestData.json" assert {type: "json"}
 import { word } from '../models/word.template';
 import { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
+import { SelectRandomWords } from '../helper/common';
 const { wordList, scoresList } = testData
 
 
-const retrieveRandomWords = (req: Request, res: Response, next: NextFunction): void => {
+const retrieveRandomWords = async (req: Request, res: Response, next: NextFunction) => {
+    let typeofWords: string[] = ['adverb', 'verb', 'noun', 'adjective']
+    let randomNeededWords: word[] = []
+    // check if the files exist
     try {
-
-        let typeofWords: string[] = ['adverb', 'verb', 'noun', 'adjective']
-        let randomNeededWords: word[] = []
-        if (!(fs.existsSync('./adverb.json') && fs.existsSync('./verb.json') && fs.existsSync('./noun.json') && fs.existsSync('./adjective.json'))) {
-            typeofWords.forEach((type: string) => {
+        if (!fs.existsSync('./adverb.json')) {
+            await Promise.all(typeofWords.map(async (type: string) => { // if not, create them
                 let words: word[] = wordList.filter((word: word) => {
                     return word.pos == type
                 })
-                fs.writeFile(`${type}.json`, JSON.stringify(words), 'utf8', () => console.log('just testing'));
-            })
+                await fs.promises.writeFile(`./${type}.json`, JSON.stringify(words), 'utf8');
+            }))
+            randomNeededWords = await SelectRandomWords()
         } else {
-            const adjectiveWords: word[] = JSON.parse(fs.readFileSync("./adjective.json").toString())
-            const adverbWords: word[] = JSON.parse(fs.readFileSync("./adverb.json").toString())
-            const nounWords: word[] = JSON.parse(fs.readFileSync("./noun.json").toString())
-            const verbWords: word[] = JSON.parse(fs.readFileSync("./verb.json").toString())
-
-            while (randomNeededWords.length != 10) {
-                if (randomNeededWords.length > 10) {
-                    randomNeededWords.pop()
-                } else { // select random elemts to push every time
-                    randomNeededWords.push(adjectiveWords[Math.floor(Math.random() * adjectiveWords.length)])
-                    randomNeededWords.push(adverbWords[Math.round(Math.random() * adverbWords.length)])
-                    randomNeededWords.push(nounWords[Math.floor(Math.random() * nounWords.length)])
-                    randomNeededWords.push(verbWords[Math.floor(Math.random() * verbWords.length)])
-                }
-            }
+            randomNeededWords = await SelectRandomWords()
         }
 
         res.status(200).send({
@@ -48,16 +36,16 @@ const retrieveRandomWords = (req: Request, res: Response, next: NextFunction): v
 
 const calcualteScore = (req: Request, res: Response, next: NextFunction): void => {
     try {
-        const finalScore:number = req.body.finalScore
-        if(finalScore < 0 || finalScore > 100) res.status(500).send({
+        const finalScore: number = req.body.finalScore
+        if (finalScore < 0 || finalScore > 100) res.status(500).send({ // validate the number
             apiStatus: false,
             message: "score must be in range!"
         })
-        const filteredArray:number[] = scoresList.filter((score) => {
+        const filteredArray: number[] = scoresList.filter((score: number) => {
             return score < finalScore
         })
-        const rank:number = (filteredArray.length / 30) *100
-        const roundedRank:number = Math.round(rank*100)/100
+        const rank: number = (filteredArray.length / 30) * 100
+        const roundedRank: number = Math.round(rank * 100) / 100
         res.status(200).send({
             apiStatus: true,
             rank: roundedRank

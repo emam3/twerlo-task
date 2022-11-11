@@ -3,7 +3,6 @@ import {RetrieveRandomWords, CalcualteScore} from '../controllers/words.controll
 const router = express.Router()
 
 // const {retrieveRandomWords, calcualteScore}:any = controllers
-console.log(RetrieveRandomWords);
 
 router.get('/word', RetrieveRandomWords)
 router.post('/rank', CalcualteScore)
